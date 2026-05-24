@@ -11,17 +11,29 @@ insurance-risk-analytics/
 │   ├── processed/              # Cleaned and preprocessed data
 │   └── .gitignore
 ├── notebooks/
-│   ├── 01_eda.ipynb           # Task 1: Exploratory Data Analysis
-│   └── 02_hypothesis_testing.ipynb
+│   ├── 01_eda.md              # Task 1: Exploratory Data Analysis
+│   └── 02_dvc_pipeline.md     # Task 2: Data Version Control
 ├── src/
 │   ├── __init__.py
 │   ├── data_processing.py     # Data cleaning and preprocessing
 │   ├── eda_utils.py           # EDA visualization utilities
 │   ├── statistical_tests.py   # Hypothesis testing functions
-│   └── modeling.py            # Predictive modeling
+│   └── data_generator.py      # Synthetic data generation
+├── scripts/
+│   ├── setup.py               # Project initialization
+│   ├── preprocess.py          # Data preprocessing
+│   ├── run_eda.py             # EDA execution
+│   └── run_hypothesis_tests.py # Hypothesis testing
+├── tests/
+│   ├── __init__.py
+│   └── test_data_processing.py # Unit tests
 ├── dvc.yaml                    # DVC pipeline configuration
-├── .gitignore
-├── requirements.txt
+├── config.py                   # Project configuration
+├── requirements.txt            # Dependencies
+├── Makefile                    # Commands
+├── START_HERE.md              # Quick navigation
+├── QUICKSTART.md              # 5-minute setup
+├── GUIDE.md                   # Complete reference
 └── README.md
 ```
 
@@ -29,30 +41,50 @@ insurance-risk-analytics/
 
 ### Objectives:
 - Initialize git repository with proper structure
-- Load and explore insurance dataset
-- Perform statistical EDA
+- Generate and load insurance dataset (10,000 records)
+- Perform statistical EDA with preprocessing
 - Create comprehensive visualizations
 - Generate EDA summary report
 
 ### Key Deliverables:
 - Git repository with organized folder structure
-- Jupyter notebook with EDA analysis
-- Visualization outputs
-- Data summary statistics
+- Data preprocessing pipeline (5 stages)
+- EDA analysis with statistical summaries
+- Visualization outputs (5+ charts)
+- Comprehensive documentation
 
 ## Task 2: Data Version Control (DVC) Pipeline Setup
 
 ### Objectives:
 - Initialize DVC for data versioning
-- Set up data pipeline stages
-- Configure reproducible workflows
-- Version control data artifacts
+- Set up reproducible pipeline stages
+- Configure data artifact tracking
+- Implement hypothesis testing
+- Version control and reproducibility
 
 ### Key Deliverables:
-- DVC initialized project
-- dvc.yaml with pipeline configuration
-- Data version tracking
+- DVC initialized project with 4-stage pipeline
+- Data version tracking and caching
+- Hypothesis testing integration
 - Reproducible pipeline execution
+- Complete pipeline documentation
+
+## Quick Start
+
+**3-step setup:**
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Initialize project
+python scripts/setup.py
+
+# 3. Run full pipeline
+dvc repro
+```
+
+Results go to `outputs/` directory.
 
 ## Installation
 
@@ -62,16 +94,51 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Task 1: Run EDA
-```bash
-jupyter notebook notebooks/01_eda.ipynb
-```
-
-### Task 2: Run DVC Pipeline
+### Run Full Pipeline
 ```bash
 dvc repro
+# or
+make pipeline
 ```
+
+### Run Specific Tasks
+```bash
+# EDA only
+python scripts/run_eda.py
+# or
+make eda
+
+# Hypothesis tests only
+python scripts/run_hypothesis_tests.py
+# or
+make test
+```
+
+### Using Makefile
+```bash
+make setup         # Initialize project
+make pipeline      # Run DVC pipeline
+make eda          # Run EDA
+make test         # Run tests
+make clean-all    # Clean outputs
+```
+
+## Documentation
+
+- **START_HERE.md** - Quick navigation and overview
+- **QUICKSTART.md** - 5-minute setup guide
+- **GUIDE.md** - Complete implementation guide
+- **IMPLEMENTATION_SUMMARY.md** - Detailed deliverables
+- **SUBMISSION_READY.md** - Submission checklist
+- **INTERIM_SUBMISSION.md** - Executive summary
+- **DELIVERY_MANIFEST.txt** - Full inventory
+- **notebooks/01_eda.md** - EDA tutorial
+- **notebooks/02_dvc_pipeline.md** - Pipeline guide
 
 ## Contributing
 
 Please follow the project structure and coding standards outlined above.
+
+## Status
+
+✅ Task 1 & Task 2 Complete and Ready for Use
