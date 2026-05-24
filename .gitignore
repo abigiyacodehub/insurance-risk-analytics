@@ -200,9 +200,11 @@ __marimo__/
 .streamlit/secrets.toml
 
 # DVC
-.dvc/
-dvc.lock
-data/raw/
-data/processed/
+.dvc/cache/
+.dvc/tmp/
+data/
+!data/
+!data/**/*.dvc
+!data/**/.gitignore
 *.parquet
 outputs/

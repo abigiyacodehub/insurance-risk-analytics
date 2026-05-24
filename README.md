@@ -84,7 +84,7 @@ python scripts/setup.py
 dvc repro
 ```
 
-Results go to `outputs/` directory.
+Results go to the `reports/` directory.
 
 ## Installation
 
@@ -100,6 +100,38 @@ dvc repro
 # or
 make pipeline
 ```
+
+### Reproduce Data With DVC
+
+This repository uses DVC for both a reproducible pipeline and explicit dataset
+version files:
+
+- Pipeline stages are defined in `dvc.yaml` and locked in `dvc.lock`.
+- The default local remote is configured in `.dvc/config` as `localstorage`.
+- Raw and cleaned dataset snapshots are tracked by:
+  - `data/versioned/raw_insurance_data.csv.dvc`
+  - `data/versioned/cleaned_insurance_data.csv.dvc`
+- Generated CSV data remains ignored by Git through `.gitignore`.
+
+```bash
+# Fetch versioned data artifacts from the configured local remote
+dvc pull
+
+# Regenerate raw data, cleaned data, EDA reports, and hypothesis reports
+dvc repro
+
+# Inspect pipeline state
+dvc status
+
+# Optional: push updated data artifacts to the local DVC remote
+dvc push
+```
+
+Primary pipeline outputs are written to:
+
+- `reports/eda/eda_report.txt`
+- `reports/eda/*.png`
+- `reports/hypothesis_tests.txt`
 
 ### Run Specific Tasks
 ```bash

@@ -22,8 +22,7 @@ stages:
       - data/processed/insurance_data_processed.csv
       - src/eda_utils.py
     outs:
-      - outputs/eda/eda_report.txt
-      - outputs/eda/:
+      - reports/eda/:
           cache: false
 
   hypothesis_testing:
@@ -32,4 +31,4 @@ stages:
       - data/raw/insurance_data.csv
       - src/statistical_tests.py
     outs:
-      - outputs/hypothesis_tests.txt
+      - reports/hypothesis_tests.txt

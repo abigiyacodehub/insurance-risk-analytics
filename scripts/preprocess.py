@@ -24,12 +24,12 @@ def main():
     
     # Define numeric columns to check for outliers
     outlier_columns = [
-        'age',
+        'TotalPremium',
+        'TotalClaims',
+        'CustomValueEstimate',
         'premium_annual',
         'coverage_amount',
-        'claim_history',
-        'risk_score',
-        'total_claims_amount'
+        'risk_score'
     ]
     
     # Run preprocessing

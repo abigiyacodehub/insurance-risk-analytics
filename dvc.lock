@@ -1,0 +1,63 @@
+schema: '2.0'
+stages:
+  generate_data:
+    cmd: python src/data_generator.py
+    deps:
+    - path: src/data_generator.py
+      hash: md5
+      md5: b9d94968c4fcaa4fffb60e010a395a2f
+      size: 7120
+    outs:
+    - path: data/raw/insurance_data.csv
+      hash: md5
+      md5: f5e8f51e68942a81c98e32f1d74cbc16
+      size: 1712850
+  preprocess_data:
+    cmd: python scripts/preprocess.py
+    deps:
+    - path: data/raw/insurance_data.csv
+      hash: md5
+      md5: f5e8f51e68942a81c98e32f1d74cbc16
+      size: 1712850
+    - path: src/data_processing.py
+      hash: md5
+      md5: 811a74082c7911847af86f703e1aa787
+      size: 6550
+    outs:
+    - path: data/processed/insurance_data_processed.csv
+      hash: md5
+      md5: 31c2a65b26f3b46ff336946f4b80598c
+      size: 844228
+  eda_analysis:
+    cmd: python scripts/run_eda.py
+    deps:
+    - path: data/processed/insurance_data_processed.csv
+      hash: md5
+      md5: 31c2a65b26f3b46ff336946f4b80598c
+      size: 844228
+    - path: src/eda_utils.py
+      hash: md5
+      md5: fef5885eaac5e46d8c664b9b1e4f806f
+      size: 10761
+    outs:
+    - path: reports/eda/
+      hash: md5
+      md5: 5754a94da1a85788a9f8f40cdd2ce7ec.dir
+      size: 1780577
+      nfiles: 8
+  hypothesis_testing:
+    cmd: python scripts/run_hypothesis_tests.py
+    deps:
+    - path: data/raw/insurance_data.csv
+      hash: md5
+      md5: f5e8f51e68942a81c98e32f1d74cbc16
+      size: 1712850
+    - path: src/statistical_tests.py
+      hash: md5
+      md5: d1b15d52bbafc6c734bd3b579f9cbba0
+      size: 8722
+    outs:
+    - path: reports/hypothesis_tests.txt
+      hash: md5
+      md5: 58eb195a875502859f0010b41fe749d2
+      size: 1372

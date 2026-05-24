@@ -1,5 +1,5 @@
 """
-Hypothesis testing script for Task 3.
+Hypothesis testing script for the Task 2 DVC pipeline.
 Performs statistical tests on insurance data.
 """
 
@@ -26,7 +26,7 @@ def main():
     """Run hypothesis testing analysis."""
     
     raw_data_path = 'data/raw/insurance_data.csv'
-    output_path = 'outputs/hypothesis_tests.txt'
+    output_path = 'reports/hypothesis_tests.txt'
     
     logger.info("Starting Hypothesis Testing")
     

@@ -28,7 +28,7 @@ def main():
     """Run comprehensive EDA analysis."""
     
     processed_data_path = 'data/processed/insurance_data_processed.csv'
-    output_dir = 'outputs/eda'
+    output_dir = 'reports/eda'
     
     logger.info("Starting EDA Analysis")
     
@@ -56,9 +56,16 @@ def main():
     # Plot correlation heatmap
     plot_correlation_heatmap(df, output_path=f'{output_dir}/02_correlation_heatmap.png')
     
-    # Plot distributions of key numeric columns
+    # Plot distributions of rubric-critical numeric columns first.
     numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    for col in numeric_cols[:5]:  # Plot first 5 numeric columns
+    priority_cols = [
+        'TotalPremium',
+        'TotalClaims',
+        'CustomValueEstimate',
+        'premium_annual',
+        'coverage_amount'
+    ]
+    for col in [col for col in priority_cols if col in df.columns]:
         plot_distribution(df, col, output_path=f'{output_dir}/03_distribution_{col}.png')
     
     # Plot feature importance by risk category if available

@@ -4,6 +4,9 @@ EDA utilities for exploratory data analysis and visualization.
 
 import pandas as pd
 import numpy as np
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
@@ -41,6 +44,14 @@ def generate_summary_statistics(df: pd.DataFrame) -> dict:
     return stats
 
 
+def add_loss_ratio(df: pd.DataFrame) -> pd.DataFrame:
+    """Add LossRatio for portfolio risk analysis."""
+    df_ratio = df.copy()
+    if {'TotalClaims', 'TotalPremium'}.issubset(df_ratio.columns):
+        df_ratio['LossRatio'] = df_ratio['TotalClaims'] / df_ratio['TotalPremium'].replace(0, np.nan)
+    return df_ratio
+
+
 def plot_distribution(df: pd.DataFrame, column: str, output_path: str = None):
     """
     Plot distribution of a single column.
@@ -72,7 +83,7 @@ def plot_distribution(df: pd.DataFrame, column: str, output_path: str = None):
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.info(f"Saved distribution plot to {output_path}")
     
-    plt.show()
+    plt.close(fig)
 
 
 def plot_correlation_heatmap(df: pd.DataFrame, output_path: str = None):
@@ -88,7 +99,7 @@ def plot_correlation_heatmap(df: pd.DataFrame, output_path: str = None):
     numeric_df = df.select_dtypes(include=[np.number])
     corr_matrix = numeric_df.corr()
     
-    plt.figure(figsize=(14, 10))
+    fig = plt.figure(figsize=(14, 10))
     sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', 
                 center=0, square=True, linewidths=0.5, cbar_kws={"shrink": 0.8})
     plt.title('Correlation Matrix of Numeric Features', fontsize=14, fontweight='bold')
@@ -99,7 +110,7 @@ def plot_correlation_heatmap(df: pd.DataFrame, output_path: str = None):
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.info(f"Saved correlation heatmap to {output_path}")
     
-    plt.show()
+    plt.close(fig)
 
 
 def plot_missing_values(df: pd.DataFrame, output_path: str = None):
@@ -119,7 +130,7 @@ def plot_missing_values(df: pd.DataFrame, output_path: str = None):
         logger.info("No missing values found")
         return
     
-    plt.figure(figsize=(12, 6))
+    fig = plt.figure(figsize=(12, 6))
     missing_percent.plot(kind='barh', color='coral')
     plt.title('Missing Values Percentage by Column', fontsize=14, fontweight='bold')
     plt.xlabel('Percentage (%)')
@@ -130,7 +141,7 @@ def plot_missing_values(df: pd.DataFrame, output_path: str = None):
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.info(f"Saved missing values plot to {output_path}")
     
-    plt.show()
+    plt.close(fig)
 
 
 def plot_feature_importance_by_target(df: pd.DataFrame, target_col: str, 
@@ -154,7 +165,7 @@ def plot_feature_importance_by_target(df: pd.DataFrame, target_col: str,
     axes = axes.flatten()
     
     for idx, feature in enumerate(feature_cols):
-        if feature in df.columns and df[feature].dtype in [np.number]:
+        if feature in df.columns and pd.api.types.is_numeric_dtype(df[feature]):
             for group in df[target_col].unique():
                 subset = df[df[target_col] == group][feature]
                 axes[idx].hist(subset, alpha=0.6, label=f'{target_col}={group}', bins=20)
@@ -175,7 +186,7 @@ def plot_feature_importance_by_target(df: pd.DataFrame, target_col: str,
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         logger.info(f"Saved feature importance plot to {output_path}")
     
-    plt.show()
+    plt.close(fig)
 
 
 def generate_eda_report(df: pd.DataFrame, target_col: str = None, 
@@ -245,6 +256,36 @@ def generate_eda_report(df: pd.DataFrame, target_col: str = None,
             f.write(f"Target Column: {target_col}\n")
             f.write(f"Value Counts:\n{df[target_col].value_counts()}\n")
             f.write(f"Value Distribution:\n{(df[target_col].value_counts() / len(df) * 100).round(2)}\n\n")
+
+        if {'TotalPremium', 'TotalClaims'}.issubset(df.columns):
+            df_ratio = add_loss_ratio(df)
+            f.write("7. GUIDING QUESTIONS\n")
+            f.write("-" * 80 + "\n")
+            for group_col in ['Province', 'VehicleType', 'Gender']:
+                if group_col in df_ratio.columns:
+                    grouped = df_ratio.groupby(group_col, observed=False).agg(
+                        TotalPremium=('TotalPremium', 'sum'),
+                        TotalClaims=('TotalClaims', 'sum'),
+                        LossRatio=('LossRatio', 'mean')
+                    ).sort_values('LossRatio', ascending=False)
+                    f.write(f"\nLoss Ratio by {group_col}:\n{grouped.head(10)}\n")
+
+            if {'TransactionMonth', 'TotalClaims'}.issubset(df_ratio.columns):
+                month = pd.to_datetime(df_ratio['TransactionMonth'], errors='coerce').dt.to_period('M')
+                trend = df_ratio.assign(Period=month).groupby('Period').agg(
+                    ClaimFrequency=('TotalClaims', lambda s: (s > 0).mean()),
+                    ClaimSeverity=('TotalClaims', lambda s: s[s > 0].mean())
+                )
+                f.write(f"\nTemporal claim frequency/severity:\n{trend.tail(12)}\n")
+
+            if {'make', 'Model', 'TotalClaims', 'TotalPremium'}.issubset(df_ratio.columns):
+                vehicle_risk = df_ratio.groupby(['make', 'Model'], observed=False).agg(
+                    Policies=('PolicyID', 'count') if 'PolicyID' in df_ratio.columns else ('TotalPremium', 'count'),
+                    TotalPremium=('TotalPremium', 'sum'),
+                    TotalClaims=('TotalClaims', 'sum'),
+                    LossRatio=('LossRatio', 'mean')
+                ).sort_values('LossRatio', ascending=False)
+                f.write(f"\nVehicle make/model risk profiles:\n{vehicle_risk.head(10)}\n")
     
     logger.info(f"EDA report saved to {report_path}")
     return str(report_path)

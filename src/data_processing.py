@@ -55,7 +55,7 @@ def handle_missing_values(df: pd.DataFrame, strategy: str = 'mean') -> pd.DataFr
         numeric_cols = df_clean.select_dtypes(include=[np.number]).columns
         df_clean[numeric_cols] = df_clean[numeric_cols].fillna(df_clean[numeric_cols].median())
     elif strategy == 'forward_fill':
-        df_clean = df_clean.fillna(method='ffill')
+        df_clean = df_clean.ffill()
     
     logger.info(f"Missing values after handling: {df_clean.isnull().sum().sum()}")
     return df_clean
@@ -87,9 +87,20 @@ def remove_outliers(df: pd.DataFrame, columns: list, method: str = 'iqr') -> pd.
             df_clean = df_clean[(df_clean[col] >= lower_bound) & (df_clean[col] <= upper_bound)]
     
     elif method == 'zscore':
-        from scipy import stats
-        z_scores = np.abs(stats.zscore(df_clean[columns].select_dtypes(include=[np.number])))
-        df_clean = df_clean[(z_scores < 3).all(axis=1)]
+        numeric_cols = df_clean[columns].select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            median = df_clean[col].median()
+            mad = np.median(np.abs(df_clean[col] - median))
+            if mad == 0:
+                std = df_clean[col].std(ddof=0)
+                if std == 0:
+                    continue
+                z_scores = np.abs((df_clean[col] - df_clean[col].mean()) / std)
+                df_clean = df_clean[z_scores < 3]
+                continue
+
+            modified_z_scores = 0.6745 * (df_clean[col] - median) / mad
+            df_clean = df_clean[np.abs(modified_z_scores) < 3.5]
     
     removed_rows = initial_rows - len(df_clean)
     logger.info(f"Removed {removed_rows} outlier rows. Remaining: {len(df_clean)}")
