@@ -1,0 +1,35 @@
+stages:
+  generate_data:
+    cmd: python src/data_generator.py
+    deps:
+      - src/data_generator.py
+    outs:
+      - data/raw/insurance_data.csv:
+          cache: true
+
+  preprocess_data:
+    cmd: python scripts/preprocess.py
+    deps:
+      - data/raw/insurance_data.csv
+      - src/data_processing.py
+    outs:
+      - data/processed/insurance_data_processed.csv:
+          cache: true
+
+  eda_analysis:
+    cmd: python scripts/run_eda.py
+    deps:
+      - data/processed/insurance_data_processed.csv
+      - src/eda_utils.py
+    outs:
+      - outputs/eda/eda_report.txt
+      - outputs/eda/:
+          cache: false
+
+  hypothesis_testing:
+    cmd: python scripts/run_hypothesis_tests.py
+    deps:
+      - data/raw/insurance_data.csv
+      - src/statistical_tests.py
+    outs:
+      - outputs/hypothesis_tests.txt
