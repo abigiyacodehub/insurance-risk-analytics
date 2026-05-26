@@ -1,0 +1,4 @@
+Model,Implementation,RMSE,R2
+Linear Regression,LinearRegression,6627.357314873508,-0.01941821206083616
+Random Forest,RandomForestRegressor,6698.403697942005,-0.041392034402673694
+XGBoost,HistGradientBoostingRegressor fallback when xgboost is unavailable,6790.703537250746,-0.07028923466427828
