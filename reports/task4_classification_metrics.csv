@@ -1,0 +1,2 @@
+Model,Accuracy,Precision,Recall,F1
+Random Forest Classifier,0.5985,0.4927536231884058,0.04239401496259352,0.07807118254879448

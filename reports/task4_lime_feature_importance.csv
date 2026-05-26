@@ -1,0 +1,11 @@
+Feature,LIME_LocalImportance
+cat__make_BMW,1449.498927450046
+cat__Model_X3,1403.5383302164896
+cat__Province_Gauteng,811.9620872831401
+cat__VehicleType_Sedan,652.492450876412
+cat__VehicleType_Truck,632.4066460784403
+cat__Model_Fortuner,599.8613684613808
+cat__make_Hyundai,552.4624483399617
+cat__make_Nissan,539.7137051064668
+cat__make_Toyota,514.0451839959213
+cat__VehicleType_Hatchback,490.78571738275963
