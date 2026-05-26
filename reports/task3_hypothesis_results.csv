@@ -1,0 +1,5 @@
+Hypothesis,Group A baseline,Group B comparison,KPI,Statistical test,Statistic,p-value,Decision
+No risk differences across provinces,Gauteng,All other provinces,Claim Frequency,Chi-squared test,12.1914,0.142866,Fail to reject H0
+No risk differences between ZIP codes,ZIP district 97,All other ZIP districts,Claim Frequency,Chi-squared test,100.274,0.194549,Fail to reject H0
+No significant margin differences between ZIP codes,ZIP district 97,ZIP district 64,Margin,Welch t-test,-1.4078,0.160768,Fail to reject H0
+No significant risk difference between women and men,Female,Male,Claim Severity,Welch t-test,-2.3926,0.01678,Reject H0
