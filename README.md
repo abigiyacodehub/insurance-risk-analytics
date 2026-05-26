@@ -69,6 +69,33 @@ insurance-risk-analytics/
 - Reproducible pipeline execution
 - Complete pipeline documentation
 
+## Task 3: A/B Hypothesis Testing
+
+### Key Deliverables:
+- Executed notebook: `notebooks/03_hypothesis_testing.ipynb`
+- Four required null hypotheses tested:
+  - No risk differences across provinces
+  - No risk differences between ZIP codes
+  - No significant margin differences between ZIP codes
+  - No significant risk difference between women and men
+- Statistical tests:
+  - Chi-squared tests for claim frequency
+  - Welch t-tests for margin and claim severity
+- Results table: `reports/task3_hypothesis_results.csv`
+
+## Task 4: Statistical Modeling & Risk-Based Pricing
+
+### Key Deliverables:
+- Executed notebook: `notebooks/04_statistical_modeling.ipynb`
+- Data preparation with missing value handling, feature engineering, encoding, and train/test split
+- Claim severity models:
+  - Linear Regression
+  - Random Forest
+  - XGBoost (`xgboost.XGBRegressor` when installed; local fallback documented in notebook)
+- Model comparison table: `reports/task4_model_comparison.csv`
+- Classification metrics: `reports/task4_classification_metrics.csv`
+- LIME-style feature importance: `reports/task4_lime_feature_importance.csv`
+
 ## Quick Start
 
 **3-step setup:**
